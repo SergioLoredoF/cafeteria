@@ -5,7 +5,11 @@ import * as dartSass from 'sass'
 import gulpSass from 'gulp-sass';
 import postcss from 'gulp-postcss';
 import autoprefixer from 'autoprefixer';
+import sourcemaps from 'gulp-sourcemaps';
+import cssnano from 'cssnano';
 const sass = gulpSass(dartSass);
+
+const { init, write } = sourcemaps;
 
 //IMG
 import imagemin from 'gulp-imagemin';
@@ -14,8 +18,10 @@ import avif from 'gulp-avif';
 
 function css( done ) {
     src( 'src/scss/app.scss', { encoding: false } )
+        .pipe( init() )
         .pipe( sass() )
-        .pipe( postcss( [ autoprefixer() ] ) )
+        .pipe( postcss( [ autoprefixer(), cssnano() ] ) )
+        .pipe( write('.'))
         .pipe( dest( 'build/css' ) )
 
     done();
@@ -52,7 +58,7 @@ export { css, dev, imagenes, versionWebp, versionAvif }
 export default series( imagenes, versionWebp, versionAvif, css, dev );
 //Series va ejecutando en serie
 //Parallel las ejecuta todas a la vez
-//npm i --save-dev autoprefixer gulp gulp-postcss gulp-sass postcss sass gulp-imagemin gulp-webp gulp-avif
+//npm i --save-dev autoprefixer gulp gulp-postcss gulp-sass postcss sass gulp-imagemin gulp-webp gulp-avif gulp-sourcemaps cssnano
 /*
     "browserslist": [
     "last 1 version",
